@@ -10,6 +10,14 @@ namespace MagicVilla_VillaAPI.Controllers
     [ApiController]
     public class VillaAPIController : ControllerBase
     {
+        /*[ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]*/
+
+        //[ProducesResponseType(200, Type = typeof(VillaDTO))]
+        //[ProducesResponseType(404)]
+        //[ProducesResponseType(500)]
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<VillaDTO>> GetVillas()
@@ -21,14 +29,6 @@ namespace MagicVilla_VillaAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-        /*[ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(500)]*/
-
-        //[ProducesResponseType(200, Type = typeof(VillaDTO))]
-        //[ProducesResponseType(404)]
-        //[ProducesResponseType(500)]
         public ActionResult<VillaDTO> GetVilla(int id)
         {
             if (id <= 0) return BadRequest();
@@ -80,5 +80,19 @@ namespace MagicVilla_VillaAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id:int}", Name = "UpdateVilla")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult UpdateVilla(int id, [FromBody] VillaDTO villaDTO)
+        {
+            if (villaDTO == null || id != villaDTO.Id) return BadRequest();
+
+            var villa = VillaStore.villaList.FirstOrDefault(u => u.Id == id);
+            villa.Name = villaDTO.Name;
+            villa.Sqft = villaDTO.Sqft;
+            villa.Occupancy = villaDTO.Occupancy;
+
+            return NoContent();
+        }
     }
 }
