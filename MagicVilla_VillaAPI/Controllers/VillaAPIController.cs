@@ -13,10 +13,9 @@ namespace MagicVilla_VillaAPI.Controllers
     public class VillaAPIController : ControllerBase
     {
         private readonly ILogging _logger;
-        public VillaAPIController(ILogger logger)
+        public VillaAPIController(ILogging logger)
         {
-            //casting cuz it can't recognize i guess
-            _logger = (ILogging?)logger;
+            _logger = logger;
         }
 
         //------used to use them to save our loggs-------------------
