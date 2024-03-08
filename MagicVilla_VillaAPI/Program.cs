@@ -45,3 +45,12 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+//-----------------------------MIGRATIONS-------------------------------------
+//migration => 
+//add-migration "NameOfMigration"
+//update-database 
+
+//if we add new info =>
+//add-migration "NameOfMigration2"
+//update-database
