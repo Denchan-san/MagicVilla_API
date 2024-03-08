@@ -5,6 +5,7 @@ using MagicVilla_VillaAPI.Models;
 using MagicVilla_VillaAPI.Models.Dto;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MagicVilla_VillaAPI.Controllers
 {
@@ -158,7 +159,7 @@ namespace MagicVilla_VillaAPI.Controllers
         {
             if (patchDTO == null || id == 0) return BadRequest();
 
-            var villa = _db.Villas.FirstOrDefault(u => u.Id == id);
+            var villa = _db.Villas.AsNoTracking().FirstOrDefault(u => u.Id == id); // we add AsNoTracking cuz we using different object to rewrite our object
 
             VillaDTO villaDTO= new()
             {
@@ -187,6 +188,7 @@ namespace MagicVilla_VillaAPI.Controllers
                 Rate = villaDTO.Rate,
                 Sqft = villaDTO.Sqft
             };
+
             _db.Villas.Update(model);
             _db.SaveChanges();
 
