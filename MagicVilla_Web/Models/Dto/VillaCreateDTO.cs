@@ -7,7 +7,7 @@ namespace MagicVilla_Web.Models.Dto
         [Required]
         [MaxLength(30)]
         public string Name { get; set; }
-        public string? Details { get; set; }
+        public string Details { get; set; }
         [Required]
         public double Rate { get; set; }
         public int Occupancy { get; set; }
