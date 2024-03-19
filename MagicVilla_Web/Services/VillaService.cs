@@ -1,10 +1,7 @@
 ﻿using MagicVilla_Utility;
-using MagicVilla_VillaAPI.Models.Dto;
+using MagicVilla_Web.Models.Dto;
 using MagicVilla_Web.Models;
 using MagicVilla_Web.Services.IServices;
-using static MagicVilla_Utility.SD;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System;
 
 namespace MagicVilla_Web.Services
 {
