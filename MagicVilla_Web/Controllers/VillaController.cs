@@ -38,7 +38,7 @@ namespace MagicVilla_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateVilla(VillaCreateDTO model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var response = await _villaService.CreateAsync<APIResponse>(model);
                 if (response != null && response.IsSuccess)
@@ -76,29 +76,30 @@ namespace MagicVilla_Web.Controllers
             return View(model);
         }
 
-        /*public async Task<IActionResult> DeleteVilla(int villaId)
+        public async Task<IActionResult> DeleteVilla(int villaId)
         {
             var response = await _villaService.GetAsync<APIResponse>(villaId);
             if (response != null && response.IsSuccess)
             {
-                return RedirectToAction(nameof(IndexVilla));
+                VillaDTO model = JsonConvert.DeserializeObject<VillaDTO>(Convert.ToString(response.Result));
+                return View(model);
             }
-            return View();
+            return NotFound();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteVilla(VillaDTO model)
         {
-            if (ModelState.IsValid)
+            //when we deleting we don`t need to check ModelState.IsValid 
+            //Model state represents errors that come from two subsystems: model binding and model validation.
+            //Errors that originate from model binding are generally data conversion errors.
+            //For example, an "x" is entered in an integer field.
+            var response = await _villaService.DeleteAsync<APIResponse>(model.Id);
+            if (response != null && response.IsSuccess)
             {
-                var response = await _villaService.DeleteAsync<APIResponse>();
-                if (response != null && response.IsSuccess)
-                {
-                    return RedirectToAction(nameof(IndexVilla));
-                }
+                return RedirectToAction(nameof(IndexVilla));
             }
-
             return View(model);
-        }*/
+        }
     }
 }
