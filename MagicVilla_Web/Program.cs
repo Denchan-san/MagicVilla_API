@@ -10,8 +10,12 @@ builder.Services.AddControllersWithViews();
 //add automapper!!!
 builder.Services.AddAutoMapper(typeof(MappingCofig));
 
+//all the service u have to do dependency injection
 builder.Services.AddHttpClient<IVillaService, VillaService>();
 builder.Services.AddScoped<IVillaService, VillaService>();
+
+builder.Services.AddHttpClient<IVillaNumberService, VillaNumberService>();
+builder.Services.AddScoped<IVillaNumberService, VillaNumberService>();
 
 var app = builder.Build();
 
