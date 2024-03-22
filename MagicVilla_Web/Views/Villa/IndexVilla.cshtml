@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MagicVilla_Web.Models.Dto.VillaNumberDTO>
+﻿@model IEnumerable<MagicVilla_Web.Models.Dto.VillaDTO>
 <br />
 <div class="container p-4 border">
     <div class="row pb-2">
@@ -29,11 +29,12 @@
             @foreach(var item in Model)
             {
                 <tr>
-                    <td>@item.Villa.Name</td>
-                    <td>@item.VillaNo</td>
+                    <td>@item.Name</td>
+                    <td>@item.Occupancy</td>
+                    <td>@((item.Rate).ToString("c"))</td>
                     <td>
-                        <a asp-controller="Villa" asp-action="UpdateVillaNumber" asp-route-villaNo="@item.VillaNo" class="btn btn-outline-success"><i class="bi bi-pencil-square"></i></a>
-                        <a asp-controller="Villa" asp-action="DeleteVillaNumber" asp-route-villaNo="@item.VillaNo" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></a>
+                        <a asp-controller="Villa" asp-action="UpdateVilla" asp-route-villaId="@item.Id" class="btn btn-outline-success"><i class="bi bi-pencil-square"></i></a>
+                        <a asp-controller="Villa" asp-action="DeleteVilla" asp-route-villaId="@item.Id" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></a>
                     </td>
                 </tr>
             }
