@@ -23,6 +23,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 });
 //add when we create new Repository
 builder.Services.AddScoped<IVillaRepository, VillaRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVillaNumberRepository, VillaNumberRepository>();
  
 builder.Services.AddAutoMapper(typeof(MappingCofig));
