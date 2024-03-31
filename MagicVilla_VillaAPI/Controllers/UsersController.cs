@@ -28,7 +28,7 @@ namespace MagicVilla_VillaAPI.Controllers
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
                 _response.ErrorMessages.Add("username or password is incorrect");
-                return BadRequest(new { message = "Username or password is incorrect" });
+                return BadRequest(_response);
             }
             _response.StatusCode = HttpStatusCode.OK;
             _response.IsSuccess = true;
