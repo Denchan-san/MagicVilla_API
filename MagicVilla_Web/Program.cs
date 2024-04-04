@@ -13,6 +13,8 @@ builder.Services.AddAutoMapper(typeof(MappingCofig));
 //all the service u have to do dependency injection
 builder.Services.AddHttpClient<IVillaService, VillaService>();
 builder.Services.AddScoped<IVillaService, VillaService>();
+//to make if statement at _Layout (SESSION VALIDATION)
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddHttpClient<IVillaNumberService, VillaNumberService>();
 builder.Services.AddScoped<IVillaNumberService, VillaNumberService>();
@@ -20,6 +22,17 @@ builder.Services.AddScoped<IVillaNumberService, VillaNumberService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+
+//need to add for users
+builder.Services.AddDistributedMemoryCache();
+
+//that too
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(100);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -37,6 +50,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+//use session need to be added for using with users -------@ and now session is configured in our project @
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

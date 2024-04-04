@@ -47,7 +47,7 @@ namespace MagicVilla_Web.Services
                         message.Method = HttpMethod.Get;
                         break;
                 }
-
+                
                 HttpResponseMessage apiResponse = null;
 
                 apiResponse = await client.SendAsync(message);
