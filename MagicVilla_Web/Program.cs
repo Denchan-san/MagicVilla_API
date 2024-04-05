@@ -1,6 +1,7 @@
 using MagicVilla_Web;
 using MagicVilla_Web.Services;
 using MagicVilla_Web.Services.IServices;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +14,6 @@ builder.Services.AddAutoMapper(typeof(MappingCofig));
 //all the service u have to do dependency injection
 builder.Services.AddHttpClient<IVillaService, VillaService>();
 builder.Services.AddScoped<IVillaService, VillaService>();
-//to make if statement at _Layout (SESSION VALIDATION)
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddHttpClient<IVillaNumberService, VillaNumberService>();
 builder.Services.AddScoped<IVillaNumberService, VillaNumberService>();
@@ -22,9 +21,22 @@ builder.Services.AddScoped<IVillaNumberService, VillaNumberService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+//to make if statement at _Layout (SESSION VALIDATION)
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 //need to add for users
 builder.Services.AddDistributedMemoryCache();
+
+//in addition to implementation of AUTHENTICATION
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.LoginPath = "/Auth/Login";
+        options.AccessDeniedPath = "/Auth/AccessDenied";
+        options.SlidingExpiration = true;
+    });
 
 //that too
 builder.Services.AddSession(options =>
@@ -48,6 +60,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+//need to make that [authorizationRequired] work! (if we defined that at API only and it's not working make sure that this  
+app.UseAuthentication();
 
 app.UseAuthorization();
 
