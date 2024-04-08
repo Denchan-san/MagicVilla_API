@@ -9,12 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
-namespace MagicVilla_VillaAPI.Controllers
+namespace MagicVilla_VillaAPI.Controllers.v1
 {
     [Route("api/v{version:apiVersion}/VillaNumberAPI")]
     [ApiController]
     [ApiVersion("1.0")]
-    [ApiVersion("2.0")]
     public class VillaNumberAPIController : ControllerBase
     {
         protected APIResponse _response;
@@ -25,7 +24,7 @@ namespace MagicVilla_VillaAPI.Controllers
         {
             _dbVillaNumber = dbVillaNumber;
             _mapper = mapper;
-            this._response = new();
+            _response = new();
             _dbVilla = dbVilla;
         }
 
@@ -37,7 +36,7 @@ namespace MagicVilla_VillaAPI.Controllers
             try
             {
                 //_logger.Log("Getting all villas", "");
-                IEnumerable<VillaNumber> villaNumberList = await _dbVillaNumber.GetAllAsync(includeProperties:"Villa");
+                IEnumerable<VillaNumber> villaNumberList = await _dbVillaNumber.GetAllAsync(includeProperties: "Villa");
                 _response.Result = _mapper.Map<List<VillaNumberDTO>>(villaNumberList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
@@ -50,13 +49,6 @@ namespace MagicVilla_VillaAPI.Controllers
                     = new List<string>() { ex.ToString() };
             }
             return _response;
-        }
-
-        [MapToApiVersion("2.0")]
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
         }
 
         [HttpGet("{id:int}", Name = "GetVillaNumber")]
@@ -110,7 +102,7 @@ namespace MagicVilla_VillaAPI.Controllers
                     ModelState.AddModelError("ErrorMessages", "Villa Number already Exists!");
                     return BadRequest(ModelState);
                 }
-                if(await _dbVilla.GetAsync(u=>u.Id == createDTO.VillaId) == null)
+                if (await _dbVilla.GetAsync(u => u.Id == createDTO.VillaId) == null)
                 {
                     ModelState.AddModelError("ErrorMessages", "Villa with this ID does not exist!");
                     return BadRequest(ModelState);
@@ -211,11 +203,11 @@ namespace MagicVilla_VillaAPI.Controllers
                 var villaNumber = await _dbVillaNumber.GetAsync(u => u.VillaNo == id, tracked: false); // we add AsNoTracking cuz we using different object to rewrite our object
 
                 //not working needs fix
-               /* if (await _dbVilla.GetAsync(u => u.Id == patchDTO.VillaId) == null)
-                {
-                    ModelState.AddModelError("CustomError", "Villa with this ID does not exist!");
-                    return BadRequest(ModelState);
-                }*/
+                /* if (await _dbVilla.GetAsync(u => u.Id == patchDTO.VillaId) == null)
+                 {
+                     ModelState.AddModelError("CustomError", "Villa with this ID does not exist!");
+                     return BadRequest(ModelState);
+                 }*/
 
                 VillaNumberUpdateDTO villaNumberDTO = _mapper.Map<VillaNumberUpdateDTO>(villaNumber); //same as   VillaUpdateDTO villaDTO =new()....
 

@@ -38,12 +38,14 @@ builder.Services.AddApiVersioning(options =>
 {
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ReportApiVersions = true;//to add version to response
 });
 
 //in addition to versioning | fixes errors at swagger with VERSIONING
 builder.Services.AddVersionedApiExplorer(options =>
 {
     options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
 });
 
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
@@ -102,6 +104,43 @@ builder.Services.AddSwaggerGen(options =>
             new List<string>()
         }
     });
+    //add for versions
+    options.SwaggerDoc("v1", new OpenApiInfo //v1 must be equal as at UseSwaggerUI(SwaggerEndpoint(.../swagger/!v1!/...)
+    {
+        Version = "v1.0",
+        Title = "Magic Villa V1",
+        Description = "API to manage Villas",
+        TermsOfService = new Uri("https://example.com/terms"),
+        Contact = new OpenApiContact
+        {
+            Name ="Dotnetmastery",
+            Url = new Uri("https://dotnetmastery.com"),
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Example License",
+            Url = new Uri("https://example.com/license")
+        }
+    });
+    //v2
+    options.SwaggerDoc("v2", new OpenApiInfo //v1 must be equal as at UseSwaggerUI(SwaggerEndpoint(.../swagger/!v1!/...)
+    {
+        Version = "v2.0",
+        Title = "Magic Villa V2",
+        Description = "API to manage Villas",
+        TermsOfService = new Uri("https://example.com/terms"),
+        Contact = new OpenApiContact
+        {
+            Name ="Dotnetmastery",
+            Url = new Uri("https://dotnetmastery.com"),
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Example License",
+            Url = new Uri("https://example.com/license")
+        }
+    });
+
 });
 
 //needed to prevent errors as DEVELOPER needs (custom), also needed Logging -> ILogging and Logging.cs
@@ -113,7 +152,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    //app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Magic_VillaV1");
+        options.SwaggerEndpoint("/swagger/v2/swagger.json", "Magic_VillaV2");
+    });
 }
 
 app.UseHttpsRedirection();
