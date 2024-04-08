@@ -32,7 +32,7 @@ namespace MagicVilla_VillaAPI.Controllers.v2
         [HttpGet("GetString")]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "Bhrugen", "DotNetMastery" };
         }
 
     }
