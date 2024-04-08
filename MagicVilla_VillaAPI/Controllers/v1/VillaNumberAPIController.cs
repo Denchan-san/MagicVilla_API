@@ -28,6 +28,12 @@ namespace MagicVilla_VillaAPI.Controllers.v1
             _dbVilla = dbVilla;
         }
 
+        [HttpGet("GetString")] //if just HttpsGet with no rout - won't work with 2+ versions
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "value3", "value4" };
+        }
+
         [HttpGet]
         [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
