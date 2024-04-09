@@ -52,7 +52,7 @@ namespace MagicVilla_VillaAPI.Controllers.v1
         //[ProducesResponseType(500)]
 
         [HttpGet]
-        //[Authorize]
+        [ResponseCache(CacheProfileName = "Default30")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -82,6 +82,7 @@ namespace MagicVilla_VillaAPI.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ResponseCache(Location = ResponseCacheLocation.None,NoStore =true)]
         public async Task<ActionResult<APIResponse>> GetVilla(int id)
         {
             try

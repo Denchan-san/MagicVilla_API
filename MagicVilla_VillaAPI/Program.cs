@@ -22,10 +22,13 @@ Log.Logger = new LoggerConfiguration().MinimumLevel.Debug()
 
 builder.Host.UseSerilog();*/
 
+//sql
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
+//enable caching
+builder.Services.AddResponseCaching();
 //add when we create new Repository
 builder.Services.AddScoped<IVillaRepository, VillaRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -70,6 +73,12 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddControllers(option =>
 {
+    //adding caching profile
+    option.CacheProfiles.Add("Default30",
+        new CacheProfile()
+        {
+            Duration = 30
+        });
     //option.ReturnHttpNotAcceptable = true;
 }).AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();
 
@@ -113,7 +122,7 @@ builder.Services.AddSwaggerGen(options =>
         TermsOfService = new Uri("https://example.com/terms"),
         Contact = new OpenApiContact
         {
-            Name ="Dotnetmastery",
+            Name = "Dotnetmastery",
             Url = new Uri("https://dotnetmastery.com"),
         },
         License = new OpenApiLicense
@@ -131,7 +140,7 @@ builder.Services.AddSwaggerGen(options =>
         TermsOfService = new Uri("https://example.com/terms"),
         Contact = new OpenApiContact
         {
-            Name ="Dotnetmastery",
+            Name = "Dotnetmastery",
             Url = new Uri("https://dotnetmastery.com"),
         },
         License = new OpenApiLicense
