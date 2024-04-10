@@ -5,8 +5,6 @@ using MagicVilla_VillaAPI.Models.Dto;
 using MagicVilla_VillaAPI.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using System.Diagnostics.Eventing.Reader;
-using System.Drawing.Printing;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -17,15 +15,17 @@ namespace MagicVilla_VillaAPI.Repository
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private string secretKey;
         private readonly IMapper _mapper;
         public UserRepository(ApplicationDbContext db, IConfiguration configuration,
-            UserManager<ApplicationUser> userManager, IMapper mapper)
+            UserManager<ApplicationUser> userManager, IMapper mapper, RoleManager<IdentityRole> roleManager)
         {
             _db = db;
             _userManager = userManager;
             _mapper = mapper;
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
+            _roleManager = roleManager;
         }
 
         public bool isUniqueUser(string username)
@@ -66,8 +66,8 @@ namespace MagicVilla_VillaAPI.Repository
                     new Claim(ClaimTypes.Name, user.Id.ToString()),
                     new Claim(ClaimTypes.Role, roles.FirstOrDefault())
                 }),
-                //Expires = DateTime.UtcNow.AddDays(7);
-                Expires = DateTime.UtcNow.AddMinutes(7),
+                Expires = DateTime.UtcNow.AddDays(7),
+                //Expires = DateTime.UtcNow.AddMinutes(7),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -82,33 +82,38 @@ namespace MagicVilla_VillaAPI.Repository
             return loginResponseDTO;
         }
 
-        public async Task<UserDTO> Register(RegisterationRequestDTO registrationRequestDTO)
+        public async Task<UserDTO> Register(RegisterationRequestDTO registerationRequestDTO)
         {
             ApplicationUser user = new()
             {
-                UserName = registrationRequestDTO.UserName,
-                Email = registrationRequestDTO.UserName,
-                NormalizedEmail = registrationRequestDTO.UserName.ToUpper(),
-                Name = registrationRequestDTO.Name,
+                UserName = registerationRequestDTO.UserName,
+                Email = registerationRequestDTO.UserName,
+                NormalizedEmail = registerationRequestDTO.UserName.ToUpper(),
+                Name = registerationRequestDTO.Name
             };
 
             try
             {
-                var result = await _userManager.CreateAsync(user, registrationRequestDTO.Password);
-
+                var result = await _userManager.CreateAsync(user, registerationRequestDTO.Password);
                 if (result.Succeeded)
                 {
+                    if (!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult()){
+                        await _roleManager.CreateAsync(new IdentityRole("admin"));
+                        await _roleManager.CreateAsync(new IdentityRole("customer"));
+                    }
+
                     await _userManager.AddToRoleAsync(user, "admin");
                     var userToReturn = _db.ApplicationUsers
-                        .FirstOrDefault(u => u.UserName == registrationRequestDTO.UserName);
+                        .FirstOrDefault(u => u.UserName == registerationRequestDTO.UserName);
                     return _mapper.Map<UserDTO>(userToReturn);
+
                 }
+                else await Console.Out.WriteLineAsync("Error is : " + result.ToString());
             }
             catch (Exception e)
             {
-                await Console.Out.WriteLineAsync("Error is : " + e.ToString());
-            }
 
+            }
 
             return new UserDTO();
         }
